@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -6,9 +6,6 @@ import { Card } from "./ui/card";
 import { useLanguage } from "./LanguageProvider";
 import { useTheme } from "./ThemeProvider";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { QRCodeLogin } from "./QRCodeLogin";
-import { motion } from "motion/react";
-import { AnimatedButton, RotatingIcon } from './animated';
 import {
   User,
   Mail,
@@ -22,8 +19,6 @@ import {
   EyeOff,
   UserPlus,
   LogIn,
-  QrCode,
-  Smartphone,
 } from "lucide-react";
 
 interface LoginPageProps {
@@ -33,7 +28,6 @@ interface LoginPageProps {
 export function LoginPage({ onLogin }: LoginPageProps) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showQRLogin, setShowQRLogin] = useState(false);
   const { language } = useLanguage();
   const { theme } = useTheme();
 
@@ -58,11 +52,6 @@ export function LoginPage({ onLogin }: LoginPageProps) {
       orContinue: "Or continue with",
       google: "Google",
       linkedin: "LinkedIn",
-      qrLogin: "QR कोड लॉगिन",
-      regularLogin: "ईमेल लॉगिन",
-      qrLoginDesc: "अपने मोबाइल डिवाइस से स्कैन करें",
-      switchToQR: "QR कोड से साइन इन करें",
-      switchToEmail: "ईमेल से साइन इन करें",
       features: {
         personalized: "Personalized Recommendations",
         skillGap: "Skills Gap Analysis",
@@ -113,7 +102,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900 relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
         <ImageWithFallback
@@ -121,7 +110,9 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           alt="Diverse students in modern technology workspace - Internship environment"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 dark:from-blue-800/30 dark:to-purple-800/30" />
+        <div
+          className={`absolute inset-0 ${theme === "dark" ? "bg-black/50" : "bg-black/30"}`}
+        />
       </div>
 
       {/* Content */}
@@ -131,7 +122,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           <div className="max-w-md">
             <div className="flex items-center gap-3 mb-6">
               <BookOpen className="w-8 h-8" />
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold">
                 {t.welcome}
               </h1>
             </div>
@@ -196,53 +187,21 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                 {/* Login Card */}
                 {!isSignUp && (
                   <Card
-                    className={`w-full p-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transform transition-all duration-500 ${!isSignUp ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
+                    className={`w-full p-8 ${theme === "dark" ? "bg-gray-900/50" : "bg-white/50"} backdrop-blur-lg border-2 border-white/30 shadow-2xl transform transition-all duration-500 ${!isSignUp ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
                   >
                     <div className="text-center mb-8">
                       <div className="flex items-center justify-center gap-2 mb-4">
-                        {showQRLogin ? (
-                          <QrCode className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                        ) : (
-                          <LogIn className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                        )}
-                        <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-                          {showQRLogin ? t.qrLogin : t.login}
+                        <LogIn className="w-6 h-6 text-primary" />
+                        <h2 className="text-2xl font-bold">
+                          {t.login}
                         </h2>
-                      </div>
-                      
-                      {/* Login Method Toggle */}
-                      <div className="flex items-center justify-center gap-2 mb-6">
-                        <Button
-                          type="button"
-                          variant={!showQRLogin ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => setShowQRLogin(false)}
-                          className={`flex items-center gap-2 ${!showQRLogin ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white' : 'border-2 hover:bg-blue-50 dark:hover:bg-blue-900/20'}`}
-                        >
-                          <Mail className="w-4 h-4" />
-                          {t.regularLogin}
-                        </Button>
-                        <Button
-                          type="button"
-                          variant={showQRLogin ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => setShowQRLogin(true)}
-                          className={`flex items-center gap-2 ${showQRLogin ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white' : 'border-2 hover:bg-purple-50 dark:hover:bg-purple-900/20'}`}
-                        >
-                          <QrCode className="w-4 h-4" />
-                          {t.qrLogin}
-                        </Button>
                       </div>
                     </div>
 
-                    {/* Conditional rendering for login methods */}
-                    {showQRLogin ? (
-                      <QRCodeLogin onSuccess={onLogin} />
-                    ) : (
-                      <form
-                        onSubmit={handleSubmit}
-                        className="space-y-6"
-                      >
+                    <form
+                      onSubmit={handleSubmit}
+                      className="space-y-6"
+                    >
                       <div className="space-y-2">
                         <Label
                           htmlFor="login-email"
@@ -342,7 +301,6 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                         </button>
                       </div>
                     </form>
-                    )}
                   </Card>
                 )}
 

@@ -19,10 +19,7 @@ import {
   Star,
   PlayCircle,
   Video,
-  ExternalLink,
-  Sun,
-  Moon,
-  Languages
+  ExternalLink
 } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { motion, AnimatePresence } from "motion/react";
@@ -32,8 +29,8 @@ interface WelcomePageProps {
 }
 
 export function WelcomePage({ onGetStarted }: WelcomePageProps) {
-  const { language, toggleLanguage } = useLanguage();
-  const { theme, toggleTheme } = useTheme();
+  const { language } = useLanguage();
+  const { theme } = useTheme();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showVideoDialog, setShowVideoDialog] = useState(false);
   const [buttonClicked, setButtonClicked] = useState("");
@@ -45,7 +42,6 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
       subtitle: "Your Gateway to Premium Internship Opportunities",
       description: "Discover, apply, and excel in internships with India's leading companies. Built for students, by students.",
       getStarted: "Get Started",
-      learnMore: "Learn More",
       watchTutorial: "Watch Tutorial",
       tutorialTitle: "InternMatch Tutorial",
       tutorialDescription: "Learn how to use InternMatch effectively with our comprehensive video guide.",
@@ -92,7 +88,6 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
       subtitle: "प्रीमियम इंटर्नशिप अवसरों का आपका गेटवे",
       description: "भारत की अग्रणी कंपनियों के साथ इंटर्नशिप खोजें, आवेदन करें और उत्कृष्टता प्राप्त करें। छात्रों के लिए, छात्रों द्वारा बनाया गया।",
       getStarted: "शुरू करें",
-      learnMore: "और जानें",
       watchTutorial: "ट्यूटोरियल देखें",
       tutorialTitle: "InternMatch ट्यूटोरियल",
       tutorialDescription: "हमारे व्यापक वीडियो गाइड के साथ InternMatch का प्रभावी रूप से उपयोग करना सीखें।",
@@ -154,48 +149,6 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
-      {/* Toggle Buttons - Fixed positioned in top right */}
-      <div className="fixed top-6 right-6 z-50 flex gap-3">
-        {/* Theme Toggle Button */}
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={toggleTheme}
-            className="p-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-2 hover:shadow-lg transition-all duration-300"
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            {theme === 'dark' ? (
-              <Sun className="h-5 w-5 text-yellow-500" />
-            ) : (
-              <Moon className="h-5 w-5 text-blue-600" />
-            )}
-          </Button>
-        </motion.div>
-
-        {/* Language Toggle Button */}
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={toggleLanguage}
-            className="p-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-2 hover:shadow-lg transition-all duration-300 min-w-[60px]"
-            title={language === 'en' ? 'हिंदी में स्विच करें' : 'Switch to English'}
-          >
-            <Languages className="h-4 w-4 mr-1 text-purple-600" />
-            <span className="text-sm font-medium">
-              {language === 'en' ? 'हिं' : 'EN'}
-            </span>
-          </Button>
-        </motion.div>
-      </div>
-
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         {/* Background Image */}
@@ -265,21 +218,7 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
                   </Button>
                 </motion.div>
                 
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  animate={buttonClicked === "learnMore" ? { scale: [1, 1.1, 1] } : {}}
-                >
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="px-8 py-3 border-2 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-300"
-                    onClick={() => handleButtonClick("learnMore", () => {})}
-                  >
-                    <BookOpen className="mr-2 h-5 w-5 text-purple-600" />
-                    {t.learnMore}
-                  </Button>
-                </motion.div>
+
               </div>
             </div>
 

@@ -8,8 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { ImpactTracker } from './ImpactTracker';
 import { CareerPathGuidance } from './CareerPathGuidance';
 import { useLanguage } from './LanguageProvider';
-import { motion } from "motion/react";
-import { AnimatedButton, AnimatedCard, RotatingIcon, AnimatedBadge } from './animated';
 
 interface RecommendationsPageProps {
   onNavigateToProfile: () => void;
@@ -163,7 +161,7 @@ export function RecommendationsPage({ onNavigateToProfile }: RecommendationsPage
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900 py-8 px-4">
+    <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center gap-3 mb-4">

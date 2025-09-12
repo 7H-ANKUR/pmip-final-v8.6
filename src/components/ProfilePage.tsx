@@ -12,8 +12,6 @@ import { ResumeEnhancer } from './ResumeEnhancer';
 import { BadgesSystem } from './BadgesSystem';
 import { useTheme } from './ThemeProvider';
 import { useLanguage } from './LanguageProvider';
-import { motion } from "motion/react";
-import { AnimatedButton, AnimatedCard, RotatingIcon, AnimatedBadge } from './animated';
 
 interface ProfilePageProps {
   onNavigateToRecommendations: () => void;
@@ -37,15 +35,6 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
 
   const [skills, setSkills] = useState<string[]>([]);
   const [interests, setInterests] = useState<string[]>([]);
-  const [buttonClicked, setButtonClicked] = useState("");
-
-  const handleButtonClick = (buttonId: string, callback?: () => void) => {
-    setButtonClicked(buttonId);
-    setTimeout(() => {
-      setButtonClicked("");
-      if (callback) callback();
-    }, 300);
-  };
 
   const availableSkills = [
     'JavaScript', 'Python', 'React', 'Node.js', 'SQL', 'Java', 'C++', 
@@ -103,15 +92,15 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900 py-8 px-4">
+    <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <User className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-            <h1 className="text-3xl md:text-4xl bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+            <User className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl md:text-4xl text-foreground">
               {t('profile.title')}
             </h1>
-            <Target className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+            <Target className="h-8 w-8 text-primary" />
           </div>
           <p className="text-lg text-muted-foreground flex items-center justify-center gap-2">
             <Award className="h-5 w-5" />
@@ -143,12 +132,10 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
           <TabsContent value="profile" className="space-y-8">
             <div className="grid lg:grid-cols-2 gap-8">
               {/* Personal Information */}
-              <AnimatedCard index={0}>
+              <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <RotatingIcon>
-                      <User className="h-5 w-5" />
-                    </RotatingIcon>
+                    <User className="h-5 w-5" />
                     {t('profile.personal_info')}
                   </CardTitle>
                   <CardDescription>
@@ -206,15 +193,13 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
                     />
                   </div>
                 </CardContent>
-              </AnimatedCard>
+              </Card>
 
               {/* Education */}
-              <AnimatedCard index={1}>
+              <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <RotatingIcon>
-                      <GraduationCap className="h-5 w-5" />
-                    </RotatingIcon>
+                    <GraduationCap className="h-5 w-5" />
                     {t('profile.education')}
                   </CardTitle>
                   <CardDescription>
@@ -255,15 +240,13 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
                     </Select>
                   </div>
                 </CardContent>
-              </AnimatedCard>
+              </Card>
 
               {/* Skills */}
-              <AnimatedCard index={2}>
+              <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <RotatingIcon>
-                      <Code className="h-5 w-5" />
-                    </RotatingIcon>
+                    <Code className="h-5 w-5" />
                     {t('profile.skills')}
                   </CardTitle>
                   <CardDescription>
@@ -290,27 +273,24 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {skills.map((skill, index) => (
-                      <AnimatedBadge 
+                      <Badge 
                         key={index} 
-                        onClick={() => removeSkill(skill)}
+                        variant="secondary"
                         className="cursor-pointer"
+                        onClick={() => removeSkill(skill)}
                       >
-                        <Badge variant="secondary">
-                          {skill} ×
-                        </Badge>
-                      </AnimatedBadge>
+                        {skill} ×
+                      </Badge>
                     ))}
                   </div>
                 </CardContent>
-              </AnimatedCard>
+              </Card>
 
               {/* Interests */}
-              <AnimatedCard index={3}>
+              <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <RotatingIcon>
-                      <Briefcase className="h-5 w-5" />
-                    </RotatingIcon>
+                    <Briefcase className="h-5 w-5" />
                     {t('profile.interests')}
                   </CardTitle>
                   <CardDescription>
@@ -337,23 +317,22 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {interests.map((interest, index) => (
-                      <AnimatedBadge 
+                      <Badge 
                         key={index} 
-                        onClick={() => removeInterest(interest)}
+                        variant="secondary"
                         className="cursor-pointer"
+                        onClick={() => removeInterest(interest)}
                       >
-                        <Badge variant="secondary">
-                          {interest} ×
-                        </Badge>
-                      </AnimatedBadge>
+                        {interest} ×
+                      </Badge>
                     ))}
                   </div>
                 </CardContent>
-              </AnimatedCard>
+              </Card>
             </div>
 
             {/* Bio */}
-            <AnimatedCard index={4}>
+            <Card>
               <CardHeader>
                 <CardTitle>{t('profile.about')}</CardTitle>
                 <CardDescription>
@@ -368,20 +347,14 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
                   rows={4}
                 />
               </CardContent>
-            </AnimatedCard>
+            </Card>
 
             {/* Save Button */}
             <div className="text-center">
-              <AnimatedButton 
-                size="lg" 
-                onClick={handleSave} 
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                <RotatingIcon>
-                  <Save className="mr-2 h-4 w-4" />
-                </RotatingIcon>
+              <Button size="lg" onClick={handleSave} className="px-8 py-3">
+                <Save className="mr-2 h-4 w-4" />
                 {t('profile.save')}
-              </AnimatedButton>
+              </Button>
             </div>
           </TabsContent>
 
@@ -399,7 +372,7 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
           <TabsContent value="settings" className="space-y-8">
             <div className="grid md:grid-cols-2 gap-8">
               {/* Theme Settings */}
-              <AnimatedCard index={5}>
+              <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     {theme === 'light' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
@@ -429,10 +402,10 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
                     </Button>
                   </div>
                 </CardContent>
-              </AnimatedCard>
+              </Card>
 
               {/* Language Settings */}
-              <AnimatedCard index={6}>
+              <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Globe className="h-5 w-5" />
@@ -453,10 +426,10 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
                     </SelectContent>
                   </Select>
                 </CardContent>
-              </AnimatedCard>
+              </Card>
 
               {/* Account Settings */}
-              <AnimatedCard index={7}>
+              <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Settings className="h-5 w-5" />
@@ -493,7 +466,7 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
                     </div>
                   </div>
                 </CardContent>
-              </AnimatedCard>
+              </Card>
             </div>
           </TabsContent>
         </Tabs>
