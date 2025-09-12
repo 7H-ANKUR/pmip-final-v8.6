@@ -1,4 +1,4 @@
-modules = ["nodejs-20", "web", "python-3.11", "python3"]
+modules = ["nodejs-20", "web", "python-3.11"]
 [agent]
 expertMode = true
 integrations = ["flask_supabase:1.0.0"]
@@ -64,5 +64,5 @@ externalPort = 3000
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["bash", "-c", "cd backend && SECRET_KEY='62dbdb467e0865e36305300d6e6e225a434d7b8e610ff8108f53a32d3908c906' JWT_SECRET_KEY='92c52911bdc32fc4cfb7a8fdf12cecf6328c2a7e531cc131f18518832b2685f5' gunicorn --bind 0.0.0.0:5000 --reuse-port app:app"]
+run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
 build = ["npm", "run", "build"]
