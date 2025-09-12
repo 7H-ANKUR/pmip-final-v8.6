@@ -61,10 +61,14 @@ localPort = 40791
 externalPort = 3001
 
 [[ports]]
+localPort = 44911
+externalPort = 3002
+
+[[ports]]
 localPort = 46457
 externalPort = 3000
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
+run = ["npm", "run", "dev"]
 build = ["npm", "run", "build"]
