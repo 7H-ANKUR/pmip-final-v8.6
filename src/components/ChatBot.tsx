@@ -117,18 +117,38 @@ export function ChatBot() {
     setInputValue("");
     setIsTyping(true);
 
-    // Simulate bot response with more realistic delay
-    setTimeout(() => {
-      const botResponse = getBotResponse(currentInput.toLowerCase());
+    try {
+      const res = await fetch(`/api/chat/ask`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: currentInput,
+          context: { source: 'chatbot', language }
+        })
+      });
+
+      const data = await res.json();
+      const answer = data?.reply || getBotResponse(currentInput.toLowerCase());
+
       const botMessage: Message = {
         id: `bot-${Date.now()}`,
-        text: botResponse,
+        text: answer,
         sender: 'bot',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, botMessage]);
+    } catch (e) {
+      const fallback = getBotResponse(currentInput.toLowerCase());
+      const botMessage: Message = {
+        id: `bot-${Date.now()}`,
+        text: fallback,
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, botMessage]);
+    } finally {
       setIsTyping(false);
-    }, Math.random() * 1000 + 800); // Random delay between 800-1800ms
+    }
   };
 
   const getBotResponse = (input: string): string => {

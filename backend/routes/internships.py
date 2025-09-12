@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, verify_jwt_in_request
 from extensions import db
-from models import Internship, Company, InternshipSkill, InternshipInterest, SavedInternship
+from models import Internship, Company, InternshipSkill, InternshipInterest, SavedInternship, Skill, Interest
 import uuid
 from datetime import datetime
 

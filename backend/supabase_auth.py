@@ -81,8 +81,10 @@ def signup():
         # Insert user into Supabase
         insert_response = supabase.table('users').insert(user_data).execute()
         
-        if not insert_response.data:
-            return jsonify({'error': 'Failed to create user'}), 500
+        if not insert_response.data or insert_response.error:
+            error_msg = insert_response.error if insert_response.error else 'Failed to create user'
+            print(f"Supabase insert error: {error_msg}")
+            return jsonify({'error': f'Failed to create user: {error_msg}'}), 500
         
         # Create access token
         access_token = create_access_token(

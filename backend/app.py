@@ -35,7 +35,18 @@ def create_app(config_class=Config):
     from routes.recommendations import recommendations_bp
     from routes.uploads import uploads_bp
     from routes.universities import universities_bp
-    from routes.resume_enhancer import resume_enhancer_bp
+    from routes.chat import chat_bp
+    from routes.resume_ai import resume_ai_bp
+    from routes.internship_recommendations import internship_recommendations_bp
+    from supabase_auth import supabase_auth_bp
+
+    # Optional blueprint: resume_enhancer (skip if heavy deps missing)
+    resume_enhancer_bp = None
+    try:
+        from routes.resume_enhancer import resume_enhancer_bp as _resume_enhancer_bp
+        resume_enhancer_bp = _resume_enhancer_bp
+    except Exception:
+        print("⚠️ Skipping resume_enhancer routes (optional dependencies not installed)")
     
     app.register_blueprint(local_auth_bp, url_prefix='/api/auth')
     app.register_blueprint(profile_bp, url_prefix='/api/profile')
@@ -44,7 +55,12 @@ def create_app(config_class=Config):
     app.register_blueprint(recommendations_bp, url_prefix='/api/recommendations')
     app.register_blueprint(uploads_bp, url_prefix='/api/uploads')
     app.register_blueprint(universities_bp, url_prefix='/api/universities')
-    app.register_blueprint(resume_enhancer_bp, url_prefix='/api/resume')
+    if resume_enhancer_bp is not None:
+        app.register_blueprint(resume_enhancer_bp, url_prefix='/api/resume')
+    app.register_blueprint(resume_ai_bp, url_prefix='/api/resume-ai')
+    app.register_blueprint(chat_bp, url_prefix='/api/chat')
+    app.register_blueprint(internship_recommendations_bp, url_prefix='/api/internship-recommendations')
+    app.register_blueprint(supabase_auth_bp, url_prefix='/api/auth')
     
     # API root endpoint
     @app.route('/api')

@@ -6,6 +6,7 @@ import { Card } from "./ui/card";
 import { useLanguage } from "./LanguageProvider";
 import { useTheme } from "./ThemeProvider";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { apiCall } from "../config/api";
 import {
   User,
   Mail,
@@ -19,6 +20,9 @@ import {
   EyeOff,
   UserPlus,
   LogIn,
+  Calendar,
+  MapPin,
+  GraduationCap,
 } from "lucide-react";
 
 interface LoginPageProps {
@@ -28,8 +32,32 @@ interface LoginPageProps {
 export function LoginPage({ onLogin }: LoginPageProps) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const { language } = useLanguage();
   const { theme } = useTheme();
+
+  // Form state for signup
+  const [signupData, setSignupData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phone: "",
+    university: "",
+    major: "",
+    location: "",
+    graduation_year: "",
+    date_of_birth: ""
+  });
+
+  // Form state for login
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: ""
+  });
 
   const translations = {
     en: {
@@ -40,10 +68,14 @@ export function LoginPage({ onLogin }: LoginPageProps) {
       email: "Email Address",
       password: "Password",
       confirmPassword: "Confirm Password",
-      fullName: "Full Name",
+      firstName: "First Name",
+      lastName: "Last Name",
       phone: "Phone Number",
-      college: "College/University",
-      skills: "Key Skills",
+      university: "University/College",
+      major: "Major/Field of Study",
+      location: "Location",
+      graduationYear: "Graduation Year",
+      dateOfBirth: "Date of Birth",
       loginBtn: "Sign In to Your Account",
       signupBtn: "Create Your Account",
       switchToSignup: "Don't have an account? Sign Up",
@@ -52,6 +84,9 @@ export function LoginPage({ onLogin }: LoginPageProps) {
       orContinue: "Or continue with",
       google: "Google",
       linkedin: "LinkedIn",
+      loading: "Please wait...",
+      success: "Success!",
+      error: "Error",
       features: {
         personalized: "Personalized Recommendations",
         skillGap: "Skills Gap Analysis",
@@ -67,10 +102,14 @@ export function LoginPage({ onLogin }: LoginPageProps) {
       email: "ईमेल पता",
       password: "पासवर्ड",
       confirmPassword: "पासवर्ड की पुष्टि करें",
-      fullName: "पूरा नाम",
+      firstName: "नाम",
+      lastName: "उपनाम",
       phone: "फोन नंबर",
-      college: "कॉलेज/विश्वविद्यालय",
-      skills: "मुख्य कौशल",
+      university: "विश्वविद्यालय/कॉलेज",
+      major: "विषय/अध्ययन क्षेत्र",
+      location: "स्थान",
+      graduationYear: "स्नातक वर्ष",
+      dateOfBirth: "जन्म तिथि",
       loginBtn: "अपने खाते में साइन इन करें",
       signupBtn: "अपना खाता बनाएं",
       switchToSignup: "खाता नहीं है? साइन अप करें",
@@ -79,6 +118,9 @@ export function LoginPage({ onLogin }: LoginPageProps) {
       orContinue: "या जारी रखें",
       google: "गूगल",
       linkedin: "लिंक्डइन",
+      loading: "कृपया प्रतीक्षा करें...",
+      success: "सफल!",
+      error: "त्रुटि",
       features: {
         personalized: "व्यक्तिगत सिफारिशें",
         skillGap: "कौशल अंतर विश्लेषण",
@@ -90,15 +132,141 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
   const t = translations[language];
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form submitted, calling onLogin...");
-    onLogin();
+  // Handle form input changes
+  const handleSignupChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setSignupData(prev => ({ ...prev, [name]: value }));
+    setError("");
   };
 
-  const handleLoginButtonClick = () => {
-    console.log("Login button clicked directly");
-    onLogin();
+  const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setLoginData(prev => ({ ...prev, [name]: value }));
+    setError("");
+  };
+
+  // Validate signup form
+  const validateSignup = () => {
+    if (!signupData.first_name.trim()) {
+      setError("First name is required");
+      return false;
+    }
+    if (!signupData.last_name.trim()) {
+      setError("Last name is required");
+      return false;
+    }
+    if (!signupData.email.trim()) {
+      setError("Email is required");
+      return false;
+    }
+    if (!/\S+@\S+\.\S+/.test(signupData.email)) {
+      setError("Please enter a valid email address");
+      return false;
+    }
+    if (!signupData.password) {
+      setError("Password is required");
+      return false;
+    }
+    if (signupData.password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      return false;
+    }
+    if (signupData.password !== signupData.confirmPassword) {
+      setError("Passwords do not match");
+      return false;
+    }
+    return true;
+  };
+
+  // Handle signup
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (!validateSignup()) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await apiCall('/api/auth/signup', {
+        method: 'POST',
+        body: JSON.stringify({
+          first_name: signupData.first_name.trim(),
+          last_name: signupData.last_name.trim(),
+          email: signupData.email.trim().toLowerCase(),
+          password: signupData.password,
+          phone: signupData.phone.trim(),
+          university: signupData.university.trim(),
+          major: signupData.major.trim(),
+          location: signupData.location.trim(),
+          graduation_year: signupData.graduation_year.trim(),
+          date_of_birth: signupData.date_of_birth
+        })
+      });
+
+      if (response.access_token) {
+        // Store token in localStorage
+        localStorage.setItem('access_token', response.access_token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        setSuccess("Account created successfully!");
+        setTimeout(() => {
+          onLogin();
+        }, 1000);
+      }
+    } catch (error: any) {
+      console.error('Signup error:', error);
+      setError(error.message || 'Failed to create account. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle login
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (!loginData.email.trim() || !loginData.password) {
+      setError("Email and password are required");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await apiCall('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: loginData.email.trim().toLowerCase(),
+          password: loginData.password
+        })
+      });
+
+      if (response.access_token) {
+        // Store token in localStorage
+        localStorage.setItem('access_token', response.access_token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        setSuccess("Login successful!");
+        setTimeout(() => {
+          onLogin();
+        }, 1000);
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      setError(error.message || 'Invalid email or password. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    if (isSignUp) {
+      handleSignup(e);
+    } else {
+      handleLogin(e);
+    }
   };
 
   return (
@@ -202,6 +370,18 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                       onSubmit={handleSubmit}
                       className="space-y-6"
                     >
+                      {/* Error/Success Messages */}
+                      {error && (
+                        <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                          {error}
+                        </div>
+                      )}
+                      {success && (
+                        <div className="p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+                          {success}
+                        </div>
+                      )}
+
                       <div className="space-y-2">
                         <Label
                           htmlFor="login-email"
@@ -212,8 +392,11 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                         </Label>
                         <Input
                           id="login-email"
+                          name="email"
                           type="email"
                           placeholder="your.email@example.com"
+                          value={loginData.email}
+                          onChange={handleLoginChange}
                           required
                         />
                       </div>
@@ -229,10 +412,13 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                         <div className="relative">
                           <Input
                             id="login-password"
+                            name="password"
                             type={
                               showPassword ? "text" : "password"
                             }
                             placeholder="••••••••"
+                            value={loginData.password}
+                            onChange={handleLoginChange}
                             required
                           />
                           <button
@@ -263,16 +449,10 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                       <Button
                         type="submit"
                         className="w-full flex items-center gap-2"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          console.log(
-                            "Button onClick triggered",
-                          );
-                          handleLoginButtonClick();
-                        }}
+                        disabled={isLoading}
                       >
                         <LogIn className="w-4 h-4" />
-                        {t.loginBtn}
+                        {isLoading ? t.loading : t.loginBtn}
                       </Button>
 
                       <div className="text-center space-y-3">
@@ -322,34 +502,52 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                       onSubmit={handleSubmit}
                       className="space-y-4"
                     >
+                      {/* Error/Success Messages */}
+                      {error && (
+                        <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                          {error}
+                        </div>
+                      )}
+                      {success && (
+                        <div className="p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+                          {success}
+                        </div>
+                      )}
+
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label
-                            htmlFor="signup-name"
+                            htmlFor="signup-first-name"
                             className="flex items-center gap-2"
                           >
                             <User className="w-4 h-4" />
-                            {t.fullName}
+                            {t.firstName}
                           </Label>
                           <Input
-                            id="signup-name"
+                            id="signup-first-name"
+                            name="first_name"
                             type="text"
-                            placeholder="John Doe"
+                            placeholder="John"
+                            value={signupData.first_name}
+                            onChange={handleSignupChange}
                             required
                           />
                         </div>
                         <div className="space-y-2">
                           <Label
-                            htmlFor="signup-phone"
+                            htmlFor="signup-last-name"
                             className="flex items-center gap-2"
                           >
-                            <Phone className="w-4 h-4" />
-                            {t.phone}
+                            <User className="w-4 h-4" />
+                            {t.lastName}
                           </Label>
                           <Input
-                            id="signup-phone"
-                            type="tel"
-                            placeholder="+91 98765 43210"
+                            id="signup-last-name"
+                            name="last_name"
+                            type="text"
+                            placeholder="Doe"
+                            value={signupData.last_name}
+                            onChange={handleSignupChange}
                             required
                           />
                         </div>
@@ -365,26 +563,122 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                         </Label>
                         <Input
                           id="signup-email"
+                          name="email"
                           type="email"
                           placeholder="your.email@example.com"
+                          value={signupData.email}
+                          onChange={handleSignupChange}
                           required
                         />
                       </div>
 
                       <div className="space-y-2">
                         <Label
-                          htmlFor="signup-college"
+                          htmlFor="signup-phone"
                           className="flex items-center gap-2"
                         >
-                          <Building className="w-4 h-4" />
-                          {t.college}
+                          <Phone className="w-4 h-4" />
+                          {t.phone}
                         </Label>
                         <Input
-                          id="signup-college"
+                          id="signup-phone"
+                          name="phone"
+                          type="tel"
+                          placeholder="+91 98765 43210"
+                          value={signupData.phone}
+                          onChange={handleSignupChange}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="signup-university"
+                          className="flex items-center gap-2"
+                        >
+                          <GraduationCap className="w-4 h-4" />
+                          {t.university}
+                        </Label>
+                        <Input
+                          id="signup-university"
+                          name="university"
                           type="text"
                           placeholder="IIT Delhi, DU, etc."
-                          required
+                          value={signupData.university}
+                          onChange={handleSignupChange}
                         />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="signup-major"
+                            className="flex items-center gap-2"
+                          >
+                            <BookOpen className="w-4 h-4" />
+                            {t.major}
+                          </Label>
+                          <Input
+                            id="signup-major"
+                            name="major"
+                            type="text"
+                            placeholder="Computer Science"
+                            value={signupData.major}
+                            onChange={handleSignupChange}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="signup-graduation-year"
+                            className="flex items-center gap-2"
+                          >
+                            <Calendar className="w-4 h-4" />
+                            {t.graduationYear}
+                          </Label>
+                          <Input
+                            id="signup-graduation-year"
+                            name="graduation_year"
+                            type="text"
+                            placeholder="2025"
+                            value={signupData.graduation_year}
+                            onChange={handleSignupChange}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="signup-location"
+                            className="flex items-center gap-2"
+                          >
+                            <MapPin className="w-4 h-4" />
+                            {t.location}
+                          </Label>
+                          <Input
+                            id="signup-location"
+                            name="location"
+                            type="text"
+                            placeholder="New Delhi, India"
+                            value={signupData.location}
+                            onChange={handleSignupChange}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="signup-date-of-birth"
+                            className="flex items-center gap-2"
+                          >
+                            <Calendar className="w-4 h-4" />
+                            {t.dateOfBirth}
+                          </Label>
+                          <Input
+                            id="signup-date-of-birth"
+                            name="date_of_birth"
+                            type="date"
+                            value={signupData.date_of_birth}
+                            onChange={handleSignupChange}
+                          />
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
@@ -399,12 +693,15 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                           <div className="relative">
                             <Input
                               id="signup-password"
+                              name="password"
                               type={
                                 showPassword
                                   ? "text"
                                   : "password"
                               }
                               placeholder="••••••••"
+                              value={signupData.password}
+                              onChange={handleSignupChange}
                               required
                             />
                             <button
@@ -432,8 +729,11 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                           </Label>
                           <Input
                             id="confirm-password"
+                            name="confirmPassword"
                             type="password"
                             placeholder="••••••••"
+                            value={signupData.confirmPassword}
+                            onChange={handleSignupChange}
                             required
                           />
                         </div>
@@ -442,16 +742,10 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                       <Button
                         type="submit"
                         className="w-full flex items-center gap-2"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          console.log(
-                            "Signup button onClick triggered",
-                          );
-                          handleLoginButtonClick();
-                        }}
+                        disabled={isLoading}
                       >
                         <UserPlus className="w-4 h-4" />
-                        {t.signupBtn}
+                        {isLoading ? t.loading : t.signupBtn}
                       </Button>
 
                       <div className="text-center space-y-3">

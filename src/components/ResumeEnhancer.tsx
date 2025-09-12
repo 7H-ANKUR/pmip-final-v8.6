@@ -68,46 +68,50 @@ export function ResumeEnhancer() {
 
   const analyzeResume = async () => {
     if (!file) return;
-    
     setIsAnalyzing(true);
-    
-    // Simulate API call for resume analysis
-    setTimeout(() => {
-      const mockAnalysis: ResumeAnalysis = {
-        overallScore: 78,
-        skillsMatch: 65,
-        improvements: [
-          'Add more quantifiable achievements with specific metrics',
-          'Include relevant keywords for your target internship role',
-          'Expand your project descriptions with technical details',
-          'Add a professional summary section',
-          'Include relevant coursework and certifications'
-        ],
-        missingSkills: [
-          'React.js',
-          'Node.js',
-          'Machine Learning',
-          'Data Analysis',
-          'Project Management'
-        ],
-        strengths: [
-          'Strong educational background',
-          'Good programming foundation',
-          'Clear project examples',
-          'Well-organized format'
-        ],
+    try {
+      const form = new FormData();
+      form.append('file', file);
+      // Optionally pass JD from UI later
+      // form.append('job_description', jobDescription);
+
+      const res = await fetch('/api/resume-ai/analyze', {
+        method: 'POST',
+        body: form
+      });
+
+      const data = await res.json();
+      const a = data?.analysis;
+      if (!a) throw new Error('No analysis');
+
+      // Map AI analysis to existing UI shape
+      const mapped: ResumeAnalysis = {
+        overallScore: typeof a.match_score === 'number' ? a.match_score : 0,
+        skillsMatch: typeof a.match_score === 'number' ? a.match_score : 0,
+        improvements: Array.isArray(a.recommendations) ? a.recommendations : [],
+        missingSkills: Array.isArray(a.gaps) ? a.gaps : [],
+        strengths: Array.isArray(a.strengths) ? a.strengths : [],
         sections: {
-          contact: 95,
-          summary: 45,
-          experience: 70,
-          education: 85,
-          skills: 60
+          contact: 80,
+          summary: 80,
+          experience: 80,
+          education: 80,
+          skills: 80
         }
       };
-      
-      setAnalysis(mockAnalysis);
+      setAnalysis(mapped);
+    } catch (e) {
+      setAnalysis({
+        overallScore: 50,
+        skillsMatch: 50,
+        improvements: ['Could not reach AI. Please try again.'],
+        missingSkills: [],
+        strengths: [],
+        sections: { contact: 50, summary: 50, experience: 50, education: 50, skills: 50 }
+      });
+    } finally {
       setIsAnalyzing(false);
-    }, 3000);
+    }
   };
 
   const getScoreColor = (score: number) => {

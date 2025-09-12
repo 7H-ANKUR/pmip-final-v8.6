@@ -13,9 +13,11 @@ class SupabaseClient:
         # Create a simple REST API client for Supabase
         if self.url and self.key:
             self.base_url = f"{self.url}/rest/v1"
+            # Use service role key for database operations (has admin access)
+            service_key = self.service_key or self.key
             self.headers = {
-                'apikey': self.key,
-                'Authorization': f'Bearer {self.key}',
+                'apikey': service_key,
+                'Authorization': f'Bearer {service_key}',
                 'Content-Type': 'application/json',
                 'Prefer': 'return=representation'
             }
@@ -219,6 +221,8 @@ class SimpleTable:
                 
         except requests.RequestException as e:
             return SimpleResponse(None, str(e))
+    
+    
     
     def update(self, data: Dict[str, Any]):
         # Build query for update

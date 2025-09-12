@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, verify_jwt_in_request
 from extensions import db
-from models import User, Internship, SavedInternship, Application
+from models import User, Internship, SavedInternship, Application, Skill, Interest, InternshipSkill, InternshipInterest
 from utils.matching import get_top_recommendations, calculate_match_score
 from datetime import datetime, timedelta
 
