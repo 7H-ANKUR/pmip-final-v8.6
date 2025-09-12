@@ -28,7 +28,7 @@ def create_app(config_class=Config):
         return jsonify({'error': 'Authorization token is required'}), 401
     
     # Import and register blueprints
-    from supabase_auth import supabase_auth_bp
+    from local_auth import local_auth_bp
     from routes.profile import profile_bp
     from routes.internships import internships_bp
     from routes.applications import applications_bp
@@ -37,7 +37,7 @@ def create_app(config_class=Config):
     from routes.universities import universities_bp
     from routes.resume_enhancer import resume_enhancer_bp
     
-    app.register_blueprint(supabase_auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(local_auth_bp, url_prefix='/api/auth')
     app.register_blueprint(profile_bp, url_prefix='/api/profile')
     app.register_blueprint(internships_bp, url_prefix='/api/internships')
     app.register_blueprint(applications_bp, url_prefix='/api/applications')

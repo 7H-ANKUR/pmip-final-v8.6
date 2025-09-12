@@ -60,6 +60,9 @@ import { fileURLToPath, URL } from 'node:url';
       allowedHosts: true,
       proxy: {
         '/api': 'http://localhost:8000'
+      },
+      hmr: {
+        port: 5000
       }
     },
   });
