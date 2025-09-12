@@ -42,6 +42,7 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd backend && python app.py"
+waitForPort = 8000
 
 [workflows.workflow.metadata]
 outputType = "console"
@@ -53,6 +54,7 @@ externalPort = 80
 [[ports]]
 localPort = 8000
 externalPort = 8000
+exposeLocalhost = true
 
 [[ports]]
 localPort = 40791
