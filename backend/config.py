@@ -8,7 +8,7 @@ class Config:
     
     # Database Configuration for Replit
     # Use Replit's PostgreSQL database URL
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql://username:password@localhost/pm_internship_db'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///app.db'
     
     # Supabase Configuration (optional)
     SUPABASE_URL = os.environ.get('SUPABASE_URL')

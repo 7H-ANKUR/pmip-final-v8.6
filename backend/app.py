@@ -46,8 +46,14 @@ def create_app(config_class=Config):
     app.register_blueprint(universities_bp, url_prefix='/api/universities')
     app.register_blueprint(resume_enhancer_bp, url_prefix='/api/resume')
     
-    # Health check endpoint
+    # API root endpoint
+    @app.route('/api')
+    def api_root():
+        return jsonify({'message': 'Prime Minister Internship Portal API'})
+    
+    # Health check endpoints
     @app.route('/health')
+    @app.route('/api/health')
     def health_check():
         from utils.supabase_client import supabase_client
         
@@ -67,6 +73,14 @@ def create_app(config_class=Config):
     def internal_error(error):
         db.session.rollback()
         return jsonify({'error': 'Internal server error'}), 500
+    
+    # Initialize database tables
+    with app.app_context():
+        try:
+            db.create_all()
+            print("✅ Database tables created successfully")
+        except Exception as e:
+            print(f"❌ Database initialization error: {e}")
     
     return app
 
