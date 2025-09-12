@@ -1,0 +1,196 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  password          String
+  firstName         String
+  lastName          String
+  phone             String?
+  university        String?
+  major             String?
+  graduationYear    String?
+  location          String?
+  bio               String?
+  age               Int?
+  profileComplete   Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  skills            UserSkill[]
+  interests         UserInterest[]
+  applications      Application[]
+  savedInternships  SavedInternship[]
+
+  @@map("users")
+}
+
+model Skill {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  users       UserSkill[]
+  internships InternshipSkill[]
+
+  @@map("skills")
+}
+
+model UserSkill {
+  id       String @id @default(cuid())
+  userId   String
+  skillId  String
+  level    String @default("beginner") // beginner, intermediate, advanced, expert
+
+  // Relations
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill    Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId])
+  @@map("user_skills")
+}
+
+model Interest {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  users       UserInterest[]
+  internships InternshipInterest[]
+
+  @@map("interests")
+}
+
+model UserInterest {
+  id         String @id @default(cuid())
+  userId     String
+  interestId String
+
+  // Relations
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interest   Interest  @relation(fields: [interestId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, interestId])
+  @@map("user_interests")
+}
+
+model Company {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String?
+  website     String?
+  logo        String?
+  location    String?
+  size        String? // startup, small, medium, large, enterprise
+  industry    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  internships Internship[]
+
+  @@map("companies")
+}
+
+model Internship {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  companyId   String
+  location    String
+  duration    String    // e.g., "12 weeks", "6 months"
+  salary      String?   // e.g., "$8,000/month", "Stipend provided"
+  requirements String[]
+  teamSize    String?
+  rating      Float?    @default(0)
+  applicants  Int       @default(0)
+  postedDate  DateTime  @default(now())
+  deadline    DateTime?
+  remote      Boolean   @default(false)
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  skills      InternshipSkill[]
+  interests   InternshipInterest[]
+  applications Application[]
+  savedBy     SavedInternship[]
+
+  @@map("internships")
+}
+
+model InternshipSkill {
+  id           String @id @default(cuid())
+  internshipId String
+  skillId      String
+  required     Boolean @default(true)
+
+  // Relations
+  internship   Internship @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+  skill        Skill      @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([internshipId, skillId])
+  @@map("internship_skills")
+}
+
+model InternshipInterest {
+  id           String @id @default(cuid())
+  internshipId String
+  interestId   String
+
+  // Relations
+  internship   Internship @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+  interest     Interest   @relation(fields: [interestId], references: [id], onDelete: Cascade)
+
+  @@unique([internshipId, interestId])
+  @@map("internship_interests")
+}
+
+model Application {
+  id           String    @id @default(cuid())
+  userId       String
+  internshipId String
+  status       String    @default("pending") // pending, accepted, rejected, withdrawn
+  appliedAt    DateTime  @default(now())
+  notes        String?
+  resumeUrl    String?
+  coverLetter  String?
+
+  // Relations
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  internship   Internship @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, internshipId])
+  @@map("applications")
+}
+
+model SavedInternship {
+  id           String @id @default(cuid())
+  userId       String
+  internshipId String
+  savedAt      DateTime @default(now())
+
+  // Relations
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  internship   Internship @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, internshipId])
+  @@map("saved_internships")
+}
