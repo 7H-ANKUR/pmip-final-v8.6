@@ -1,199 +1,92 @@
-"""
-Vercel serverless function entry point for the Prime Minister Internship Portal API
-"""
-
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
-import sys
-import json
-from urllib.parse import urlparse, parse_qs
 
-# Add the backend directory to the Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'backend'))
+app = Flask(__name__)
+CORS(app, origins=['*'])
 
-def handler(request):
-    """Vercel serverless function handler"""
+# Health check endpoint
+@app.route('/api/health', methods=['GET'])
+def health():
+    return jsonify({
+        'status': 'OK',
+        'message': 'Prime Minister Internship Portal API is running',
+        'environment': 'production'
+    })
+
+# Basic auth endpoints for demo
+@app.route('/api/auth/login', methods=['POST'])
+def login():
     try:
-        # Parse the request
-        method = request.get('httpMethod', 'GET')
-        path = request.get('path', '/')
-        headers = request.get('headers', {})
-        body = request.get('body', '')
-        query_params = request.get('queryStringParameters', {}) or {}
+        data = request.get_json()
+        email = data.get('email', '')
+        password = data.get('password', '')
         
-        # Route to appropriate handler based on path
-        if path == '/api/health' or path == '/health':
-            return health_handler(request)
-        elif path.startswith('/api/auth'):
-            return auth_handler(request)
-        elif path.startswith('/api/profile'):
-            return profile_handler(request)
-        elif path.startswith('/api/internships'):
-            return internships_handler(request)
-        elif path.startswith('/api/applications'):
-            return applications_handler(request)
-        elif path.startswith('/api/recommendations'):
-            return recommendations_handler(request)
-        elif path.startswith('/api/uploads'):
-            return uploads_handler(request)
-        elif path.startswith('/api/universities'):
-            return universities_handler(request)
-        elif path.startswith('/api/resume'):
-            return resume_handler(request)
+        # Basic validation (replace with real auth logic)
+        if email and password:
+            return jsonify({
+                'message': 'Login successful',
+                'access_token': 'demo-token-for-frontend',
+                'user': {
+                    'id': '1',
+                    'email': email,
+                    'first_name': 'Demo',
+                    'last_name': 'User'
+                }
+            }), 200
         else:
-            return {
-                'statusCode': 404,
-                'headers': {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
-                },
-                'body': json.dumps({'error': 'Route not found'})
+            return jsonify({'error': 'Email and password required'}), 400
+            
+    except Exception as e:
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/api/auth/signup', methods=['POST'])
+def signup():
+    try:
+        data = request.get_json()
+        
+        # Basic validation
+        required_fields = ['email', 'password', 'first_name', 'last_name']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'error': f'{field} is required'}), 400
+        
+        return jsonify({
+            'message': 'User created successfully',
+            'access_token': 'demo-token-for-frontend',
+            'user': {
+                'id': '1',
+                'email': data['email'],
+                'first_name': data['first_name'],
+                'last_name': data['last_name']
             }
-    except Exception as e:
-        return {
-            'statusCode': 500,
-            'headers': {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-            'body': json.dumps({
-                'error': 'Internal server error',
-                'message': str(e)
-            })
-        }
-
-def health_handler(request):
-    """Health check handler"""
-    try:
-        from utils.supabase_client import supabase_client
+        }), 201
         
-        response_data = {
-            'status': 'OK',
-            'message': 'Prime Minister Internship Portal API is running',
-            'supabase_configured': supabase_client.is_configured(),
-            'environment': os.environ.get('ENV', 'production'),
-            'platform': 'vercel'
-        }
-        
-        return {
-            'statusCode': 200,
-            'headers': {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-            },
-            'body': json.dumps(response_data)
-        }
     except Exception as e:
-        return {
-            'statusCode': 500,
-            'headers': {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-            'body': json.dumps({
-                'status': 'ERROR',
-                'message': str(e)
-            })
-        }
+        return jsonify({'error': 'Internal server error'}), 500
 
-def auth_handler(request):
-    """Authentication handler"""
-    # Import and use the auth routes
-    try:
-        from supabase_auth import supabase_auth_bp
-        # Process authentication requests
-        return {
-            'statusCode': 200,
-            'headers': {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-            'body': json.dumps({'message': 'Auth endpoint - implement specific auth logic'})
-        }
-    except Exception as e:
-        return {
-            'statusCode': 500,
-            'headers': {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-            'body': json.dumps({'error': str(e)})
-        }
+# Catch-all route for API
+@app.route('/api/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def catch_all(path):
+    return jsonify({
+        'error': f'API endpoint /{path} not implemented yet',
+        'available_endpoints': ['/api/health', '/api/auth/login', '/api/auth/signup']
+    }), 404
 
-def profile_handler(request):
-    """Profile handler"""
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        'body': json.dumps({'message': 'Profile endpoint'})
-    }
+# Handle root API route
+@app.route('/api/', methods=['GET'])
+@app.route('/api', methods=['GET'])
+def api_root():
+    return jsonify({
+        'message': 'Prime Minister Internship Portal API',
+        'version': '1.0.0',
+        'available_endpoints': ['/api/health', '/api/auth/login', '/api/auth/signup']
+    })
 
-def internships_handler(request):
-    """Internships handler"""
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        'body': json.dumps({'message': 'Internships endpoint'})
-    }
-
-def applications_handler(request):
-    """Applications handler"""
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        'body': json.dumps({'message': 'Applications endpoint'})
-    }
-
-def recommendations_handler(request):
-    """Recommendations handler"""
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        'body': json.dumps({'message': 'Recommendations endpoint'})
-    }
-
-def uploads_handler(request):
-    """Uploads handler"""
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        'body': json.dumps({'message': 'Uploads endpoint'})
-    }
-
-def universities_handler(request):
-    """Universities handler"""
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        'body': json.dumps({'message': 'Universities endpoint'})
-    }
-
-def resume_handler(request):
-    """Resume handler"""
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        'body': json.dumps({'message': 'Resume endpoint'})
-    }
+# For Vercel serverless
+if __name__ == '__main__':
+    app.run(debug=True)
+else:
+    # Export for Vercel
+    from werkzeug.serving import WSGIRequestHandler
+    handler = app

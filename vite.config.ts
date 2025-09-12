@@ -59,10 +59,16 @@ import { fileURLToPath, URL } from 'node:url';
       port: 5000,
       allowedHosts: true,
       proxy: {
-        '/api': 'http://localhost:8000'
-      },
-      hmr: {
-        port: 5000
+        '/api': {
+          target: 'http://localhost:8000',
+          changeOrigin: true,
+          configure: (proxy, options) => {
+            // Only proxy in development
+            if (process.env.NODE_ENV === 'production') {
+              return false;
+            }
+          }
+        }
       }
     },
   });
