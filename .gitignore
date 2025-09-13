@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+.venv/
 backend/venv/
 backend/__pycache__/
 backend/*.pyc
@@ -20,6 +21,12 @@ backend/*.log
 backend/.mypy_cache
 backend/.pytest_cache
 backend/.hypothesis
+
+# Python virtual environment
+.venv/
+venv/
+env/
+ENV/
 
 # Environment variables
 .env

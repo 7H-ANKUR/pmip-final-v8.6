@@ -1,19 +1,12 @@
 services:
-  # Backend Service
   - type: web
     name: pmip-backend
     env: python
-    region: oregon
-    plan: free
-    buildCommand: |
-      pip install -r backend/requirements.txt
-    startCommand: |
-      cd backend && python app.py
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && python app.py
     envVars:
       - key: FLASK_ENV
         value: production
-      - key: FLASK_APP
-        value: app.py
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_KEY
@@ -24,5 +17,11 @@ services:
         sync: false
       - key: JWT_SECRET_KEY
         generateValue: true
-      - key: USE_SUPABASE_AUTH
-        value: "true"
+
+  - type: static
+    name: pmip-frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
