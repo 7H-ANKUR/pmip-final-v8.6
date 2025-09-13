@@ -1,392 +1,239 @@
-# 🎯 Prime Minister Internship Portal (PMIP) v7.9
+# PMIP v8.6 - Professional Internship Matching Platform
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![React](https://img.shields.io/badge/React-18.3.1-blue.svg)](https://reactjs.org/)
-[![Flask](https://img.shields.io/badge/Flask-2.3.3-green.svg)](https://flask.palletsprojects.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-blue.svg)](https://www.postgresql.org/)
+A comprehensive web application for matching students with internship opportunities using AI-powered recommendations and modern authentication.
 
-> **InternMatch** - A comprehensive internship matching platform that connects students with relevant internship opportunities through AI-powered recommendations and intelligent matching algorithms.
+## 🚀 Features
 
-## 🌟 Overview
+### Core Functionality
+- **User Authentication** - Secure signup/login with Supabase
+- **Profile Management** - Auto-populated profiles from signup data
+- **QR Code Login** - Mobile device login simulation
+- **AI-Powered Resume Analysis** - Gemini AI integration
+- **Smart Chatbot** - AI-powered career guidance
+- **Internship Recommendations** - ML-based matching system
+- **Real-time Dashboard** - Interactive user interface
 
-The Prime Minister Internship Portal (PMIP) is a full-stack web application designed to bridge the gap between students seeking internships and companies offering opportunities. The platform features an intelligent matching system that considers user skills, interests, location preferences, and educational background to provide personalized internship recommendations.
+### Technical Features
+- **Frontend**: React + TypeScript + Vite
+- **Backend**: Flask + Python
+- **Database**: Supabase (PostgreSQL)
+- **AI Integration**: Google Gemini API
+- **Authentication**: JWT + Supabase Auth
+- **Deployment**: Render-ready configuration
 
-### 🎯 Key Features
+## 🛠️ Tech Stack
 
-- **🔐 Secure Authentication**: JWT-based authentication with user registration and login
-- **👤 Profile Management**: Comprehensive user profiles with skills, interests, and educational background
-- **🎯 Smart Matching**: AI-powered algorithm matching users with relevant internships
-- **📋 Application Tracking**: Complete application management and status tracking
-- **💾 Saved Internships**: Bookmark and save internships for later review
-- **🤖 AI Chatbot**: Interactive chatbot for user assistance and guidance
-- **📊 Analytics Dashboard**: User statistics and application insights
-- **🌐 Multi-language Support**: Internationalization support for multiple languages
-- **📱 Responsive Design**: Mobile-first design with modern UI/UX
-- **🎨 Dark/Light Theme**: Theme switching capability
+### Frontend
+- React 18.3.1
+- TypeScript
+- Vite 6.3.5
+- Tailwind CSS
+- Radix UI Components
+- Lucide React Icons
 
-## 🏗️ Architecture
+### Backend
+- Flask 2.3.3
+- Python 3.10
+- Supabase Client
+- JWT Authentication
+- Google Generative AI
+- Scikit-learn
+- Pandas & NumPy
 
-### Frontend (React + TypeScript)
-- **Framework**: React 18.3.1 with TypeScript
-- **Build Tool**: Vite 6.3.5
-- **UI Library**: Radix UI components with Tailwind CSS
-- **State Management**: React hooks and context
-- **Icons**: Lucide React
-- **Charts**: Recharts for data visualization
-
-### Backend (Flask + Python)
-- **Framework**: Flask 2.3.3
-- **Database**: PostgreSQL with SQLAlchemy ORM
-- **Authentication**: JWT (JSON Web Tokens)
-- **Security**: Flask-Bcrypt for password hashing
-- **CORS**: Cross-origin resource sharing support
-- **Migration**: Flask-Migrate for database migrations
-
-### Database Schema
-- **Users**: User profiles and authentication data
-- **Companies**: Company information and details
-- **Internships**: Internship listings with requirements
-- **Applications**: User application tracking
-- **Skills & Interests**: Categorization system
-- **Matching**: Relationship tables for recommendations
-
-## 🚀 Quick Start
+## 📦 Installation
 
 ### Prerequisites
+- Node.js 18+
+- Python 3.10+
+- Git
 
-- **Node.js** 18+ and npm
-- **Python** 3.8+
-- **PostgreSQL** 12+
-- **Git**
-
-### Installation
+### Local Development
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/7H-ANKUR/pmip-v7.9.git
-   cd pmip-v7.9
+   git clone https://github.com/7H-ANKUR/final-pmip-v8.6.git
+   cd final-pmip-v8.6
    ```
 
-2. **Frontend Setup**
+2. **Backend Setup**
+   ```bash
+   # Create virtual environment
+   python -m venv .venv
+   
+   # Activate virtual environment
+   # Windows
+   .venv\Scripts\activate
+   # macOS/Linux
+   source .venv/bin/activate
+   
+   # Install dependencies
+   cd backend
+   pip install -r requirements.txt
+   
+   # Set environment variables
+   cp .env.example .env
+   # Edit .env with your credentials
+   
+   # Run backend
+   python app.py
+   ```
+
+3. **Frontend Setup**
    ```bash
    # Install dependencies
    npm install
    
-   # Start development server
+   # Run frontend
    npm run dev
    ```
 
-3. **Backend Setup**
-   ```bash
-   cd backend
-   
-   # Create virtual environment
-   python -m venv venv
-   
-   # Activate virtual environment
-   # Windows:
-   venv\Scripts\activate
-   # macOS/Linux:
-   source venv/bin/activate
-   
-   # Install dependencies
-   pip install -r requirements.txt
-   
-   # Set up environment variables
-   cp env.example .env
-   # Edit .env with your database credentials
-   
-   # Run database migrations
-   flask db init
-   flask db migrate -m "Initial migration"
-   flask db upgrade
-   
-   # Seed the database
-   python seed.py
-   
-   # Start the backend server
-   python app.py
-   ```
-
-4. **Access the Application**
-   - Frontend: http://localhost:5173
+4. **Access the application**
+   - Frontend: http://localhost:5001
    - Backend API: http://localhost:8000
-   - Health Check: http://localhost:8000/health
+
+## 🔧 Environment Variables
+
+### Backend (.env)
+```env
+FLASK_ENV=development
+FLASK_APP=app.py
+SUPABASE_URL=your_supabase_url
+SUPABASE_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_KEY=your_supabase_service_role_key
+GEMINI_API_KEY=your_gemini_api_key
+JWT_SECRET_KEY=your_jwt_secret_key
+USE_SUPABASE_AUTH=true
+```
+
+### Frontend (.env)
+```env
+VITE_API_URL=http://localhost:8000
+```
+
+## 🚀 Deployment
+
+### Render Deployment
+
+1. **Backend Service**
+   - Connect to GitHub repository
+   - Use `render.yaml` configuration
+   - Set environment variables
+   - Deploy with Gunicorn
+
+2. **Frontend Service**
+   - Static site deployment
+   - Set `VITE_API_URL` to backend URL
+   - Build with Vite
+
+### Manual Deployment
+```bash
+# Build frontend
+npm run build
+
+# Deploy backend
+cd backend
+gunicorn --bind 0.0.0.0:$PORT app:app
+```
 
 ## 📁 Project Structure
 
 ```
-pmip-v7.9/
-├── 📁 src/                          # Frontend React application
-│   ├── 📁 components/               # React components
-│   │   ├── 📁 ui/                   # Reusable UI components
-│   │   ├── HomePage.tsx             # Landing page
-│   │   ├── ProfilePage.tsx          # User profile management
-│   │   ├── RecommendationsPage.tsx  # Internship recommendations
-│   │   ├── ChatBot.tsx              # AI chatbot
-│   │   └── ...                      # Other components
-│   ├── 📁 services/                 # API services
-│   ├── App.tsx                      # Main application component
-│   └── main.tsx                     # Application entry point
-├── 📁 backend/                      # Flask backend application
-│   ├── 📁 routes/                   # API route handlers
-│   │   ├── auth.py                  # Authentication routes
-│   │   ├── profile.py               # Profile management
-│   │   ├── internships.py           # Internship CRUD
-│   │   ├── applications.py          # Application tracking
-│   │   └── recommendations.py       # Matching algorithm
-│   ├── 📁 utils/                    # Utility functions
-│   ├── models.py                    # Database models
-│   ├── app.py                       # Flask application factory
-│   └── requirements.txt             # Python dependencies
-├── package.json                     # Frontend dependencies
-├── vite.config.ts                   # Vite configuration
-└── README.md                        # This file
+final-pmip-v8.6/
+├── backend/
+│   ├── app.py                 # Flask application
+│   ├── requirements.txt       # Python dependencies
+│   ├── start.sh              # Production startup script
+│   ├── runtime.txt           # Python version
+│   ├── routes/               # API endpoints
+│   ├── utils/                # Utility functions
+│   └── config.py             # Configuration
+├── src/
+│   ├── components/           # React components
+│   ├── config/              # API configuration
+│   └── utils/               # Frontend utilities
+├── render.yaml              # Render deployment config
+├── Procfile                 # Alternative deployment
+├── DEPLOYMENT_GUIDE.md      # Deployment instructions
+└── README.md               # This file
 ```
 
-## 🔧 Configuration
+## 🔑 API Endpoints
 
-### Environment Variables
+### Authentication
+- `POST /api/auth/signup` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user
+- `PUT /api/auth/update-profile` - Update profile
 
-Create a `.env` file in the backend directory:
+### AI Features
+- `POST /api/chat/ask` - AI chatbot
+- `POST /api/resume-ai/analyze` - Resume analysis
+- `POST /api/internship-recommendations/recommend` - Get recommendations
 
-```env
-# Database Configuration
-DATABASE_URL=postgresql://username:password@localhost/pm_internship_db
+### QR Login
+- `GET /api/qr/status/<token>` - Check QR status
+- `POST /api/qr/scan` - Handle QR scan
 
-# Security
-SECRET_KEY=your-secret-key-here
-JWT_SECRET_KEY=jwt-secret-string
+## 🎯 Key Features
 
-# CORS
-CORS_ORIGINS=http://localhost:5173
+### QR Code Login
+- Generate QR codes for mobile login
+- Real-time status updates
+- Mobile device simulation
 
-# Environment
-ENV=development
-```
+### Profile Auto-Population
+- Signup data automatically fills profile
+- No need to re-enter information
+- Seamless user experience
 
-### Frontend Configuration
+### AI Integration
+- Gemini AI for chatbot responses
+- Resume analysis with AI insights
+- Smart internship matching
 
-The frontend is configured through `vite.config.ts` with:
-- React SWC plugin for fast compilation
-- Path aliases for clean imports
-- Development server on port 5173
-- Build output to `build/` directory
+## 📱 Mobile Support
+- Responsive design
+- QR code login simulation
+- Mobile-optimized interface
 
-## 🎯 API Endpoints
+## 🔒 Security
+- JWT authentication
+- Password hashing with bcrypt
+- CORS configuration
+- Environment variable protection
 
-### Authentication (`/api/auth`)
-- `POST /signup` - User registration
-- `POST /login` - User login
-- `GET /me` - Get current user profile
-- `GET /verify` - Verify JWT token
-- `POST /change-password` - Change user password
+## 🚀 Performance
+- Vite for fast development
+- Gunicorn for production
+- Optimized builds
+- Efficient API calls
 
-### Profile Management (`/api/profile`)
-- `GET /` - Get user profile
-- `PUT /` - Update user profile
-- `POST /skills` - Add skill to profile
-- `DELETE /skills/<skill_id>` - Remove skill
-- `POST /interests` - Add interest to profile
-- `DELETE /interests/<interest_id>` - Remove interest
-- `GET /available-skills` - Get all available skills
-- `GET /available-interests` - Get all available interests
-- `POST /complete` - Mark profile as complete
-- `GET /stats` - Get profile statistics
-
-### Internships (`/api/internships`)
-- `GET /` - Get all internships (with filtering)
-- `GET /<internship_id>` - Get specific internship
-- `POST /` - Create new internship (admin)
-- `PUT /<internship_id>` - Update internship (admin)
-- `DELETE /<internship_id>` - Delete internship (admin)
-- `POST /<internship_id>/save` - Save/unsave internship
-- `GET /saved/list` - Get saved internships
-- `GET /companies` - Get all companies
-
-### Applications (`/api/applications`)
-- `GET /` - Get user applications
-- `POST /` - Apply for internship
-- `GET /<application_id>` - Get specific application
-- `PUT /<application_id>` - Update application
-- `DELETE /<application_id>` - Withdraw application
-- `GET /stats/summary` - Get application statistics
-- `GET /check/<internship_id>` - Check application status
-
-### Recommendations (`/api/recommendations`)
-- `GET /` - Get personalized recommendations
-- `GET /match/<internship_id>` - Get match score for specific internship
-- `GET /category/<category>` - Get recommendations by category
-- `GET /trending` - Get trending internships
-- `GET /similar/<internship_id>` - Get similar internships
-
-## 🧠 Matching Algorithm
-
-The recommendation system uses a sophisticated matching algorithm with the following weights:
-
-1. **Skills Matching (40%)**: Compares user skills with internship requirements
-2. **Interests Matching (25%)**: Matches user interests with internship focus areas
-3. **Location Preference (15%)**: Considers location compatibility and remote options
-4. **Education Compatibility (10%)**: Evaluates educational background suitability
-5. **Profile Completeness (10%)**: Bonus points for complete profiles
-
-### Algorithm Features
-- **Weighted Scoring**: Each factor contributes to an overall match score
-- **High-Demand Skills**: Additional bonus for valuable skills
-- **Location Flexibility**: Remote work options increase compatibility
-- **Profile Optimization**: Encourages complete user profiles
-
-## 🎨 UI Components
-
-The application uses a comprehensive set of UI components built with Radix UI and styled with Tailwind CSS:
-
-- **Layout**: Navigation, Footer, Theme Provider
-- **Forms**: Input, Select, Checkbox, Radio Group
-- **Feedback**: Alert, Toast, Progress, Skeleton
-- **Navigation**: Tabs, Breadcrumb, Pagination
-- **Data Display**: Table, Card, Badge, Avatar
-- **Overlay**: Dialog, Popover, Tooltip, Sheet
-
-## 🚀 Deployment
-
-### Frontend Deployment (Vercel/Netlify)
-
-```bash
-# Build the application
-npm run build
-
-# Deploy to Vercel
-npx vercel --prod
-
-# Or deploy to Netlify
-npx netlify deploy --prod --dir=build
-```
-
-### Backend Deployment (Heroku/Railway)
-
-```bash
-# Install Heroku CLI
-# Create Procfile
-echo "web: gunicorn -w 4 -b 0.0.0.0:$PORT app:app" > Procfile
-
-# Deploy to Heroku
-git add .
-git commit -m "Deploy to Heroku"
-git push heroku main
-```
-
-### Docker Deployment
-
-```bash
-# Build and run with Docker Compose
-cd backend
-docker-compose up --build
-```
-
-## 🧪 Testing
-
-### Frontend Testing
-```bash
-# Install testing dependencies
-npm install --save-dev @testing-library/react @testing-library/jest-dom
-
-# Run tests
-npm test
-```
-
-### Backend Testing
-```bash
-# Install testing dependencies
-pip install pytest pytest-flask
-
-# Run tests
-pytest
-```
-
-## 📊 Performance Optimization
-
-- **Code Splitting**: Lazy loading of components
-- **Image Optimization**: Optimized images and lazy loading
-- **Caching**: API response caching
-- **Database Indexing**: Optimized database queries
-- **Bundle Analysis**: Regular bundle size monitoring
-
-## 🔒 Security Features
-
-- **JWT Authentication**: Secure token-based authentication
-- **Password Hashing**: Bcrypt for password security
-- **CORS Protection**: Cross-origin request security
-- **Input Validation**: Server-side input validation
-- **SQL Injection Prevention**: SQLAlchemy ORM protection
-- **XSS Protection**: React's built-in XSS protection
-
-## 🌐 Internationalization
-
-The application supports multiple languages through the LanguageProvider:
-- English (default)
-- Hindi
-- Spanish
-- French
-- German
+## 📊 Database Schema
+- Users table with comprehensive fields
+- Supabase integration
+- Row Level Security (RLS)
 
 ## 🤝 Contributing
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
-We welcome contributions! Please follow these steps:
+## 📄 License
+This project is licensed under the MIT License.
 
-1. **Fork the repository**
-2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
-3. **Commit your changes**: `git commit -m 'Add amazing feature'`
-4. **Push to the branch**: `git push origin feature/amazing-feature`
-5. **Open a Pull Request**
+## 🆘 Support
+For support and questions:
+- Create an issue on GitHub
+- Check the deployment guide
+- Review the documentation
 
-### Development Guidelines
-
-- Follow the existing code style
-- Add tests for new features
-- Update documentation as needed
-- Ensure all tests pass
-- Use meaningful commit messages
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👥 Team
-
-- **Ankur** - Full Stack Developer & Project Lead
-- **Contributors** - Open source contributors
-
-## 🙏 Acknowledgments
-
-- **React Team** - For the amazing React framework
-- **Flask Team** - For the lightweight Python web framework
-- **Radix UI** - For accessible UI components
-- **Tailwind CSS** - For utility-first CSS framework
-- **Vite** - For the fast build tool
-
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/7H-ANKUR/pmip-v7.9/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/7H-ANKUR/pmip-v7.9/discussions)
-- **Email**: [Contact Support](mailto:support@pmip.com)
-
-## 🔄 Version History
-
-- **v7.9** - Current version with enhanced matching algorithm
-- **v7.8** - Added chatbot integration
-- **v7.7** - Improved UI/UX design
-- **v7.6** - Multi-language support
-- **v7.5** - Performance optimizations
+## 🎉 Acknowledgments
+- Supabase for backend services
+- Google Gemini for AI capabilities
+- Render for deployment platform
+- React and Flask communities
 
 ---
 
-<div align="center">
-
-**⭐ Star this repository if you found it helpful!**
-
-Made with ❤️ by [Ankur](https://github.com/7H-ANKUR)
-
-[🔗 Live Demo](https://pmip-demo.vercel.app) | [📖 Documentation](https://pmip-docs.vercel.app) | [🐛 Report Bug](https://github.com/7H-ANKUR/pmip-v7.9/issues)
-
-</div>
+**Ready for deployment on Render! 🚀**
