@@ -26,20 +26,3 @@ services:
         generateValue: true
       - key: USE_SUPABASE_AUTH
         value: "true"
-
-  # Frontend Service
-  - type: static
-    name: pmip-frontend
-    region: oregon
-    plan: free
-    buildCommand: |
-      npm install
-      npm run build
-    staticPublishPath: ./dist
-    routes:
-      - type: rewrite
-        source: /api/*
-        destination: https://pmip-backend.onrender.com/api/*
-      - type: rewrite
-        source: /*
-        destination: /index.html
