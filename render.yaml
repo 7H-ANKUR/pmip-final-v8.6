@@ -6,9 +6,9 @@ services:
     region: oregon
     plan: free
     buildCommand: |
-      pip install -r backend/requirements.txt
+      cd backend && pip install -r requirements.txt
     startCommand: |
-      cd backend && python app.py
+      cd backend && gunicorn app:app
     envVars:
       - key: FLASK_ENV
         value: production
@@ -26,19 +26,22 @@ services:
         generateValue: true
       - key: USE_SUPABASE_AUTH
         value: "true"
+      - key: PYTHON_VERSION
+        value: 3.11.0
 
   # Frontend Service
-  - type: static
+  - type: web
     name: pmip-frontend
+    env: node
     region: oregon
     plan: free
     buildCommand: |
-      npm install
-      npm run build
-    staticPublishPath: ./dist
+      npm install && npm run build
+    startCommand: |
+      npm run start
     envVars:
-      - key: VITE_API_URL
-        sync: false
+      - key: NODE_VERSION
+        value: 18.12.0
     routes:
       - type: rewrite
         source: /api/*
