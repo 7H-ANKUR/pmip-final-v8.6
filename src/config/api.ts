@@ -1,12 +1,18 @@
 // API Configuration
 const getApiBaseUrl = () => {
-  // In production (Vercel), use the current domain for API calls
-  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-    return `${window.location.protocol}//${window.location.host}`;
+  // Check for environment variable first (for Render deployment)
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
   }
   
-  // In development, use localhost proxy
-  return '';
+  // In production (Render), use the backend service URL
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    // For Render deployment, you'll need to replace this with your actual backend URL
+    return 'https://pmip-backend.onrender.com';
+  }
+  
+  // In development, use direct backend URL
+  return 'http://localhost:8000';
 };
 
 export const API_BASE_URL = getApiBaseUrl();

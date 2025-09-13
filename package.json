@@ -57,6 +57,8 @@
       "scripts": {
             "dev": "vite",
             "build": "vite build",
-            "vercel-build": "vite build"
+            "vercel-build": "vite build",
+            "render-build": "vite build",
+            "preview": "vite preview"
       }
 }

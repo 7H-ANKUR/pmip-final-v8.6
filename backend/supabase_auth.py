@@ -259,3 +259,59 @@ def update_profile():
     except Exception as e:
         print(f"Update profile error: {str(e)}")
         return jsonify({'error': 'Internal server error'}), 500
+
+# QR Code Login endpoints
+@supabase_auth_bp.route('/qr/status/<token>', methods=['GET'])
+def check_qr_status(token):
+    """Check if QR code has been scanned (simulation)"""
+    try:
+        # For simulation, randomly return success after some time
+        # In a real implementation, you'd check a database or cache
+        import random
+        import time
+        
+        # Simulate checking if token exists and is valid
+        if len(token) > 10:  # Basic validation
+            # 30% chance of success for simulation
+            if random.random() < 0.3:
+                return jsonify({
+                    'scanned': True,
+                    'loginToken': f'qr_login_token_{token}_{int(time.time())}',
+                    'message': 'QR code scanned successfully'
+                })
+        
+        return jsonify({
+            'scanned': False,
+            'message': 'QR code not scanned yet'
+        })
+        
+    except Exception as e:
+        print(f"QR status check error: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+@supabase_auth_bp.route('/qr/scan', methods=['POST'])
+def scan_qr_code():
+    """Handle QR code scan from mobile device (simulation)"""
+    try:
+        data = request.get_json()
+        token = data.get('token')
+        
+        if not token:
+            return jsonify({'error': 'Token is required'}), 400
+        
+        # In a real implementation, you'd:
+        # 1. Validate the token
+        # 2. Get user info from the mobile device
+        # 3. Generate a login token
+        # 4. Store the scan status
+        
+        # For simulation, just return success
+        return jsonify({
+            'success': True,
+            'message': 'QR code scanned successfully',
+            'loginToken': f'qr_login_token_{token}_{int(time.time())}'
+        })
+        
+    except Exception as e:
+        print(f"QR scan error: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500

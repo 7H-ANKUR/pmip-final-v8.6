@@ -6,6 +6,7 @@ import { Card } from "./ui/card";
 import { useLanguage } from "./LanguageProvider";
 import { useTheme } from "./ThemeProvider";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { QRLogin } from "./QRLogin";
 import { apiCall } from "../config/api";
 import {
   User,
@@ -23,6 +24,7 @@ import {
   Calendar,
   MapPin,
   GraduationCap,
+  QrCode,
 } from "lucide-react";
 
 interface LoginPageProps {
@@ -35,6 +37,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showQRLogin, setShowQRLogin] = useState(false);
   const { language } = useLanguage();
   const { theme } = useTheme();
 
@@ -93,6 +96,8 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         careerPath: "Career Path Guidance",
         topCompanies: "Top Company Connections",
       },
+      qrLogin: "QR Code Login",
+      qrLoginDesc: "Quick login with your mobile device",
     },
     hi: {
       welcome: "InternMatch में आपका स्वागत है",
@@ -127,6 +132,8 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         careerPath: "करियर पथ मार्गदर्शन",
         topCompanies: "शीर्ष कंपनी कनेक्शन",
       },
+      qrLogin: "QR कोड लॉगिन",
+      qrLoginDesc: "अपने मोबाइल डिवाइस से त्वरित लॉगिन",
     },
   };
 
@@ -267,6 +274,17 @@ export function LoginPage({ onLogin }: LoginPageProps) {
     } else {
       handleLogin(e);
     }
+  };
+
+  // Handle QR login
+  const handleQRLogin = (token: string) => {
+    console.log('QR Login successful with token:', token);
+    // For simulation, we'll just call onLogin
+    // In a real implementation, you'd validate the token and get user data
+    setSuccess("QR Login successful!");
+    setTimeout(() => {
+      onLogin();
+    }, 1000);
   };
 
   return (
@@ -453,6 +471,17 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                       >
                         <LogIn className="w-4 h-4" />
                         {isLoading ? t.loading : t.loginBtn}
+                      </Button>
+
+                      {/* QR Login Button */}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full flex items-center gap-2"
+                        onClick={() => setShowQRLogin(true)}
+                      >
+                        <QrCode className="w-4 h-4" />
+                        {t.qrLogin}
                       </Button>
 
                       <div className="text-center space-y-3">
@@ -781,6 +810,14 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           </div>
         </div>
       </div>
+
+      {/* QR Login Modal */}
+      {showQRLogin && (
+        <QRLogin
+          onQRLogin={handleQRLogin}
+          onClose={() => setShowQRLogin(false)}
+        />
+      )}
     </div>
   );
 }

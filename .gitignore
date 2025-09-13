@@ -134,6 +134,7 @@ backend/.webassets-cache
 *.temp
 
 # Python virtual environments
+.venv/
 venv/
 env/
 ENV/

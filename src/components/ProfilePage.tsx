@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Save, User, GraduationCap, Briefcase, Code, Settings, Globe, Moon, Sun, Target, Award, Shield, Bell, Eye } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Save, User, GraduationCap, Briefcase, Code, Settings, Globe, Moon, Sun, Target, Award, Shield, Bell, Eye, Phone, Calendar } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
@@ -26,15 +26,45 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
     lastName: '',
     email: '',
     age: '',
+    phone: '',
     university: '',
     major: '',
     graduationYear: '',
     location: '',
+    dateOfBirth: '',
     bio: ''
   });
 
   const [skills, setSkills] = useState<string[]>([]);
   const [interests, setInterests] = useState<string[]>([]);
+
+  // Auto-populate profile from localStorage on component mount
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        setProfile(prevProfile => ({
+          ...prevProfile,
+          firstName: user.first_name || '',
+          lastName: user.last_name || '',
+          email: user.email || '',
+          phone: user.phone || '',
+          university: user.university || '',
+          major: user.major || '',
+          graduationYear: user.graduation_year || '',
+          location: user.location || '',
+          dateOfBirth: user.date_of_birth || '',
+          // Calculate age from date of birth if available
+          age: user.date_of_birth ? 
+            (new Date().getFullYear() - new Date(user.date_of_birth).getFullYear()).toString() : 
+            prevProfile.age
+        }));
+      } catch (error) {
+        console.error('Error parsing user data from localStorage:', error);
+      }
+    }
+  }, []);
 
   const availableSkills = [
     'JavaScript', 'Python', 'React', 'Node.js', 'SQL', 'Java', 'C++', 
@@ -174,6 +204,19 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
                     />
                   </div>
                   <div>
+                    <Label htmlFor="phone" className="flex items-center gap-2">
+                      <Phone className="h-4 w-4" />
+                      Phone Number
+                    </Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      value={profile.phone}
+                      onChange={(e) => setProfile({...profile, phone: e.target.value})}
+                      placeholder="+91 98765 43210"
+                    />
+                  </div>
+                  <div>
                     <Label htmlFor="age">{t('profile.age')}</Label>
                     <Input
                       id="age"
@@ -190,6 +233,18 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
                       value={profile.location}
                       onChange={(e) => setProfile({...profile, location: e.target.value})}
                       placeholder="San Francisco, CA"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="dateOfBirth" className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      Date of Birth
+                    </Label>
+                    <Input
+                      id="dateOfBirth"
+                      type="date"
+                      value={profile.dateOfBirth}
+                      onChange={(e) => setProfile({...profile, dateOfBirth: e.target.value})}
                     />
                   </div>
                 </CardContent>
@@ -227,7 +282,7 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
                   </div>
                   <div>
                     <Label htmlFor="graduationYear">{t('profile.graduation_year')}</Label>
-                    <Select onValueChange={(value) => setProfile({...profile, graduationYear: value})}>
+                    <Select value={profile.graduationYear} onValueChange={(value) => setProfile({...profile, graduationYear: value})}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select year" />
                       </SelectTrigger>
@@ -236,6 +291,8 @@ export function ProfilePage({ onNavigateToRecommendations }: ProfilePageProps) {
                         <SelectItem value="2026">2026</SelectItem>
                         <SelectItem value="2027">2027</SelectItem>
                         <SelectItem value="2028">2028</SelectItem>
+                        <SelectItem value="2029">2029</SelectItem>
+                        <SelectItem value="2030">2030</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
