@@ -8,6 +8,7 @@ import { RecommendationsPage } from "./components/RecommendationsPage";
 import { Footer } from "./components/Footer";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { LanguageProvider } from "./components/LanguageProvider";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 export default function App() {
   const [showWelcome, setShowWelcome] = useState(true);
@@ -33,65 +34,71 @@ export default function App() {
   // Show welcome page first
   if (showWelcome) {
     return (
-      <ThemeProvider>
-        <LanguageProvider>
-          <WelcomePage onGetStarted={handleGetStarted} />
-        </LanguageProvider>
-      </ThemeProvider>
+      <ErrorBoundary>
+        <ThemeProvider>
+          <LanguageProvider>
+            <WelcomePage onGetStarted={handleGetStarted} />
+          </LanguageProvider>
+        </ThemeProvider>
+      </ErrorBoundary>
     );
   }
 
   // Show login page if user is not logged in
   if (!isLoggedIn) {
     return (
-      <ThemeProvider>
-        <LanguageProvider>
-          <LoginPage onLogin={handleLogin} />
-        </LanguageProvider>
-      </ThemeProvider>
+      <ErrorBoundary>
+        <ThemeProvider>
+          <LanguageProvider>
+            <LoginPage onLogin={handleLogin} />
+          </LanguageProvider>
+        </ThemeProvider>
+      </ErrorBoundary>
     );
   }
 
   return (
-    <ThemeProvider>
-      <LanguageProvider>
-        <div className="min-h-screen bg-background">
-          <Navigation
-            currentView={currentView}
-            onViewChange={setCurrentView}
-            onLogout={handleLogout}
-          />
-
-          {currentView === "home" && (
-            <HomePage
-              onNavigateToProfile={() =>
-                setCurrentView("profile")
-              }
-              onNavigateToRecommendations={() =>
-                setCurrentView("recommendations")
-              }
+    <ErrorBoundary>
+      <ThemeProvider>
+        <LanguageProvider>
+          <div className="min-h-screen bg-background">
+            <Navigation
+              currentView={currentView}
+              onViewChange={setCurrentView}
+              onLogout={handleLogout}
             />
-          )}
 
-          {currentView === "profile" && (
-            <ProfilePage
-              onNavigateToRecommendations={() =>
-                setCurrentView("recommendations")
-              }
-            />
-          )}
+            {currentView === "home" && (
+              <HomePage
+                onNavigateToProfile={() =>
+                  setCurrentView("profile")
+                }
+                onNavigateToRecommendations={() =>
+                  setCurrentView("recommendations")
+                }
+              />
+            )}
 
-          {currentView === "recommendations" && (
-            <RecommendationsPage
-              onNavigateToProfile={() =>
-                setCurrentView("profile")
-              }
-            />
-          )}
+            {currentView === "profile" && (
+              <ProfilePage
+                onNavigateToRecommendations={() =>
+                  setCurrentView("recommendations")
+                }
+              />
+            )}
 
-          <Footer />
-        </div>
-      </LanguageProvider>
-    </ThemeProvider>
+            {currentView === "recommendations" && (
+              <RecommendationsPage
+                onNavigateToProfile={() =>
+                  setCurrentView("profile")
+                }
+              />
+            )}
+
+            <Footer />
+          </div>
+        </LanguageProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
