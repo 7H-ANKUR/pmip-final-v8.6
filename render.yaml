@@ -10,7 +10,8 @@ services:
       pip install -r requirements.txt
     startCommand: |
       cd backend
-      python app.py
+      chmod +x start.sh
+      ./start.sh
     envVars:
       - key: FLASK_ENV
         value: production

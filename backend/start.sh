@@ -11,6 +11,6 @@ pip install -r requirements.txt
 export FLASK_ENV=production
 export FLASK_APP=app.py
 
-# Start the application
-echo "🌟 Starting Flask application..."
-python app.py
+# Start the application with Gunicorn for production
+echo "🌟 Starting Flask application with Gunicorn..."
+gunicorn --bind 0.0.0.0:$PORT app:app
